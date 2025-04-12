@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoL 固定スコア勝利予測ツール</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; background-color: #f4f4f4; }
+        h1, h2 { text-align: center; color: #333; }
+        .container { display: flex; justify-content: space-around; margin-bottom: 20px; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .team-column { border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 45%; }
+        .team-column h3 { margin-top: 0; text-align: center; }
+        .blue { border-color: dodgerblue; background-color: #e7f3ff; }
+        .red { border-color: crimson; background-color: #ffebee; }
+        .blue h3 span { color: dodgerblue; }
+        .red h3 span { color: crimson; }
+        .objective-row { margin-bottom: 12px; display: flex; align-items: center; }
+        label { display: inline-block; width: 100px; font-weight: bold; font-size: 0.95em; color: #555; }
+        input[type="number"], input[type="radio"] { margin-right: 5px; }
+        input[type="number"] { width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 3px; }
+        .center { text-align: center; margin-top: 20px; margin-bottom: 20px; }
+        .fb-section { background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .fb-section label { width: auto; margin-right: 15px; } /* ラジオボタン用ラベル幅調整 */
+        button { padding: 12px 25px; font-size: 1.2em; cursor: pointer; background-color: #5cb85c; color: white; border: none; border-radius: 5px; transition: background-color 0.3s ease; }
+        button:hover { background-color: #4cae4c; }
+        #resultArea { margin-top: 30px; padding: 20px; border: 1px solid #ddd; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #resultArea h2 { margin-top: 0; color: #333; }
+        #resultArea p { margin: 8px 0; font-size: 1.1em; }
+        .error { color: red; font-weight: bold; }
+        .score-display { font-weight: bold; }
+        .win-prob span { font-weight: bold; }
+        .point-info { font-size: 0.8em; color: #666; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>LoL 固定スコア勝利予測ツール</h1>
+
+    <div class="fb-section center">
+        <label style="font-weight: bold;">ファーストブラッド (8点):</label>
+        <input type="radio" id="fb_blue" name="first_blood" value="blue"> <label for="fb_blue" style="color:dodgerblue;">ブルー</label>
+        <input type="radio" id="fb_red" name="first_blood" value="red"> <label for="fb_red" style="color:crimson;">レッド</label>
+        <input type="radio" id="fb_none" name="first_blood" value="none" checked> <label for="fb_none">まだ</label>
+    </div>
+
+    <div class="container">
+        <!-- ブルーチーム -->
+        <div class="team-column blue">
+            <h3><span>ブルーチーム</span></h3>
+            <div class="objective-row">
+                <label for="blue_grubs">グラブ数:</label>
+                <input type="number" id="blue_grubs" name="blue_grubs" min="0" max="6" value="0">
+                <span class="point-info">(7点/体)</span>
+            </div>
+            <div class="objective-row">
+                <label for="blue_dragons">ドラゴン数:</label>
+                <input type="number" id="blue_dragons" name="blue_dragons" min="0" value="0">
+                 <span class="point-info">(9点/体)</span>
+            </div>
+            <div class="objective-row">
+                <label for="blue_heralds">ヘラルド数:</label>
+                <input type="number" id="blue_heralds" name="blue_heralds" min="0" max="2" value="0">
+                <span class="point-info">(18点/体)</span>
+            </div>
+            <div class="objective-row">
+                <label for="blue_barons">バロン数:</label>
+                <input type="number" id="blue_barons" name="blue_barons" min="0" value="0">
+                 <span class="point-info">(40点/体)</span>
+            </div>
+            <div class="objective-row">
+                <label for="blue_atakhan">アタカン数:</label>
+                 <input type="number" id="blue_atakhan" name="blue_atakhan" min="0" value="0">
+                 <span class="point-info">(31点/体)</span>
+            </div>
+        </div>
+
+        <!-- レッドチーム -->
+        <div class="team-column red">
+            <h3><span>レッドチーム</span></h3>
+            <div class="objective-row">
+                <label for="red_grubs">グラブ数:</label>
+                <input type="number" id="red_grubs" name="red_grubs" min="0" max="6" value="0">
+                <span class="point-info">(7点/体)</span>
+            </div>
+            <div class="objective-row">
+                <label for="red_dragons">ドラゴン数:</label>
+                <input type="number" id="red_dragons" name="red_dragons" min="0" value="0">
+                 <span class="point-info">(9点/体)</span>
+            </div>
+            <div class="objective-row">
+                <label for="red_heralds">ヘラルド数:</label>
+                <input type="number" id="red_heralds" name="red_heralds" min="0" max="2" value="0">
+                <span class="point-info">(18点/体)</span>
+            </div>
+             <div class="objective-row">
+                <label for="red_barons">バロン数:</label>
+                <input type="number" id="red_barons" name="red_barons" min="0" value="0">
+                 <span class="point-info">(40点/体)</span>
+            </div>
+            <div class="objective-row">
+                <label for="red_atakhan">アタカン数:</label>
+                 <input type="number" id="red_atakhan" name="red_atakhan" min="0" value="0">
+                 <span class="point-info">(31点/体)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="center">
+        <button type="button" onclick="calculate()">予測する</button>
+    </div>
+
+    <!-- 結果表示エリア -->
+    <div id="resultArea" style="display: none;"> <!-- 最初は隠しておく -->
+        <h2>予測結果</h2>
+        <p><strong style="color:dodgerblue;">ブルーチーム スコア:</strong> <span id="blueScore" class="score-display">0</span></p>
+        <p><strong style="color:crimson;">レッドチーム スコア:</strong> <span id="redScore" class="score-display">0</span></p>
+        <p><strong id="resultMessage"></strong></p>
+        <p class="win-prob"><strong>簡易勝率予測:</strong> <span id="blueWinProb" style="color:dodgerblue;">50.0%</span> | <span id="redWinProb" style="color:crimson;">50.0%</span></p>
+        <p id="errorMessage" class="error"></p>
+    </div>
+
+    <script>
+        // 固定スコア設定
+        const SCORES = {
+            FIRST_BLOOD: 8,
+            VOID_GRUB: 7,
+            DRAGON: 9,
+            RIFT_HERALD: 18,
+            BARON: 40,
+            ATAKHAN: 31 // ユーザー指定の「アタカン」項目
+        };
+
+        function calculate() {
+            // エラーメッセージリセット
+            document.getElementById('errorMessage').textContent = '';
+            let blueScore = 0;
+            let redScore = 0;
+
+            try {
+                // --- ファーストブラッド ---
+                const fbValue = document.querySelector('input[name="first_blood"]:checked').value;
+                if (fbValue === 'blue') {
+                    blueScore += SCORES.FIRST_BLOOD;
+                } else if (fbValue === 'red') {
+                    redScore += SCORES.FIRST_BLOOD;
+                }
+
+                // --- ブルーチームのオブジェクト ---
+                blueScore += (parseInt(document.getElementById('blue_grubs').value) || 0) * SCORES.VOID_GRUB;
+                blueScore += (parseInt(document.getElementById('blue_dragons').value) || 0) * SCORES.DRAGON;
+                blueScore += (parseInt(document.getElementById('blue_heralds').value) || 0) * SCORES.RIFT_HERALD;
+                blueScore += (parseInt(document.getElementById('blue_barons').value) || 0) * SCORES.BARON;
+                blueScore += (parseInt(document.getElementById('blue_atakhan').value) || 0) * SCORES.ATAKHAN; // アタカン
+
+                // --- レッドチームのオブジェクト ---
+                redScore += (parseInt(document.getElementById('red_grubs').value) || 0) * SCORES.VOID_GRUB;
+                redScore += (parseInt(document.getElementById('red_dragons').value) || 0) * SCORES.DRAGON;
+                redScore += (parseInt(document.getElementById('red_heralds').value) || 0) * SCORES.RIFT_HERALD;
+                redScore += (parseInt(document.getElementById('red_barons').value) || 0) * SCORES.BARON;
+                redScore += (parseInt(document.getElementById('red_atakhan').value) || 0) * SCORES.ATAKHAN; // アタカン
+
+                // --- 結果表示 ---
+                document.getElementById('blueScore').textContent = blueScore;
+                document.getElementById('redScore').textContent = redScore;
+
+                let message = "";
+                if (blueScore > redScore) {
+                    message = `予測: ブルーチームが ${blueScore - redScore} ポイント有利です。`;
+                } else if (redScore > blueScore) {
+                    message = `予測: レッドチームが ${redScore - blueScore} ポイント有利です。`;
+                } else {
+                    message = "予測: 現在のオブジェクト状況では互角です。";
+                }
+                document.getElementById('resultMessage').textContent = message;
+
+                // --- 簡易勝率計算 ---
+                const totalScore = blueScore + redScore;
+                let blueProb = 50.0;
+                let redProb = 50.0;
+                if (totalScore > 0) {
+                    blueProb = (blueScore / totalScore) * 100;
+                    redProb = (redScore / totalScore) * 100;
+                }
+                document.getElementById('blueWinProb').textContent = `${blueProb.toFixed(1)}%`;
+                document.getElementById('redWinProb').textContent = `${redProb.toFixed(1)}%`;
+
+                // 結果エリアを表示
+                document.getElementById('resultArea').style.display = 'block';
+
+            } catch (error) {
+                console.error("計算エラー:", error); // ブラウザの開発者コンソールにエラー表示
+                document.getElementById('errorMessage').textContent = '計算中にエラーが発生しました。入力値を確認してください。';
+                document.getElementById('resultArea').style.display = 'block'; // エラー時もエリアは表示
+            }
+        }
+    </script>
+
+</body>
+</html>
